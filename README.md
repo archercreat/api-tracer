@@ -19,4 +19,17 @@ Optional arguments:
   -t, --tracer  Path to tracer.dll [default: ""]
 ```
 
-In order to use api-tracer, one needs to place `hooks.txt` file that contains list of dlls seperated by new line in the current directory. To filter api calls from specific modules, place `filter.txt` in the current directory with the list of modules. The output will be logged in `trace.txt` file.
+In order to use api-tracer, one needs to place `hooks.txt` file that contains list of dlls seperated by new line in the current directory. To filter api calls from specific modules, place `filters.txt` in the current directory with the list of modules. The output will be logged in `trace.txt` file.
+
+## Example setup.
+
+`filters.txt`:
+```
+my-awesome-program.exe
+```
+
+`hooks.txt`:
+```
+kernel32.dll
+user32.dll
+```
