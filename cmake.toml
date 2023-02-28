@@ -1,0 +1,42 @@
+[project]
+name      = "apitracer"
+languages = ["CXX", "ASM_MASM"]
+
+cmake-before = """
+set(ASMJIT_STATIC TRUE)
+
+cmake_policy(SET CMP0091 NEW)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "")
+"""
+
+[target.ntdll]
+type = "interface"
+include-directories = ["ntdll/"]
+link-directories    = ["ntdll/"]
+x32.link-libraries  = ["ntdll_x86"]
+x64.link-libraries  = ["ntdll_x64"]
+
+[fetch-content.minhook]
+git = "https://github.com/TsudaKageyu/minhook.git"
+
+[fetch-content.asmjit]
+git = "https://github.com/asmjit/asmjit.git"
+
+[fetch-content.argparse]
+git = "https://github.com/p-ranav/argparse.git"
+
+[target.tracer]
+type                = "shared"
+sources             = ["tracer/*.cpp", "tracer/*.hpp", "tracer/*.asm", "printf/*.c"]
+compile-features    = ["cxx_std_23"]
+link-libraries      = ["ntdll", "minhook", "asmjit"]
+link-options        = ["/INCREMENTAL:NO"]
+include-directories = ["${CMAKE_CURRENT_SOURCE_DIR}/ntdll/", "tracer/", "printf/"]
+
+[target.loader]
+type                = "executable"
+sources             = ["loader/*.cpp", "loader/*.hpp"]
+compile-features    = ["cxx_std_23"]
+link-libraries      = ["ntdll", "argparse"]
+link-options        = ["/INCREMENTAL:NO"]
+include-directories = ["${CMAKE_CURRENT_SOURCE_DIR}/ntdll/", "loader/"]
